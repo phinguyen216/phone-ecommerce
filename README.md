@@ -29,3 +29,4 @@ Dự án Website thương mại điện tử bán điện thoại được xây 
 4. Chạy dự án bằng laragon (PHP 8.2.20).
 # Chú thích
 - Trong dự án này, em ưu tiên tập trung thời gian vào thanh toán trực tuyến vì đây là phần khó nhất (có tham khảo nguồn trên youtube và chat gpt). Về phần đăng ký, em đã thiết lập Unique Constraint trực tiếp trong Database để đảm bảo tính duy nhất của tài khoản. Ở các phiên bản tiếp theo, em sẽ bổ sung thêm các lớp Validation ở phía Backend để trải nghiệm người dùng tốt hơn.
+- link demo thank toán VNpay Sanbox: https://drive.google.com/file/d/1HlEkUMH9XzPFFK-JagWmqTSv3wMqMAjP/view?usp=sharing
