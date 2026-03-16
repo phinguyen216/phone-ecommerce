@@ -39,19 +39,6 @@
         </li>
 
         <li class="sidebar-title">HỆ THỐNG</li>
-
-        <li>
-          <a href="#" class="sidebar-link">
-            <i class="bi bi-telephone"></i> Liên hệ
-          </a>
-        </li>
-
-        <li>
-          <a href="#" class="sidebar-link">
-            <i class="bi bi-gear-wide-connected"></i> Cài đặt hệ thống
-          </a>
-        </li>
-
         <li>
           <a href="index.php?act=logout" class="sidebar-link text-danger">
             <i class="bi bi-box-arrow-right"></i> Đăng xuất
