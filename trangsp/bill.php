@@ -57,10 +57,10 @@ function formatCurrency($amount)
             <label for="pttt1">Phương thức thanh toán:</label>
             <table>
                 <tr>
-                    <td><input type="radio" id="pttt1" name="pttt" value="1" required> Thanh toán trực tiếp</td>
+                    <td><input type="radio" id="pttt1" name="pttt" value="1" required> Thanh toán trực tiếp (COD)</td>
                 </tr>
                 <tr>
-                   <td><input type="radio" name="pttt" value="2"> Thanh toán online</td> 
+                   <td><input type="radio" name="pttt" value="2"> Thanh toán online (VNPay)</td> 
                 </tr>
             </table>
 

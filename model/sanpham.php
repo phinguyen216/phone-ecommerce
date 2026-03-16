@@ -3,14 +3,19 @@ function insert_sanpham($name,$mota,$img,$price,$stock,$iddm){
   $sql = "INSERT INTO sanpham(name,mota,img,price,stock,iddm) values('$name','$mota','$img','$price',$stock,'$iddm')";
   pdo_execute($sql);
 }
-function loadAll_sanpham($iddm = 0){
-  if ($iddm > 0) {
-      $sql = "SELECT * FROM sanpham WHERE iddm = $iddm";
-  } else {
-      $sql = "SELECT * FROM sanpham";
-  }
-  $listsanpham = pdo_query($sql);
-  return $listsanpham;
+function loadall_sanpham($kyw = "", $iddm = 0) {
+    $sql = "SELECT * FROM sanpham WHERE 1"; 
+    
+    if ($kyw != "") {
+        $sql .= " AND name LIKE '%" . $kyw . "%'";
+    }
+    if ($iddm > 0) {
+        $sql .= " AND iddm = '" . $iddm . "'";
+    }
+    
+    $sql .= " ORDER BY id DESC";
+    $listsanpham = pdo_query($sql);
+    return $listsanpham;
 }
 
   function delete_sanpham($id){

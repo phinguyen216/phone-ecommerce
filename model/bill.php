@@ -1,8 +1,9 @@
 <?php
 
-function insert_bill($iduser, $hoten, $diachi, $sdt, $email, $pttt, $ngaydathang, $total, $trangthai) {
-    $sql = "INSERT INTO bill (iduser, hoten, diachi, sdt, email, pttt, ngaydathang, total, trangthai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    return pdo_execute_return_lastInsertId($sql, $iduser, $hoten, $diachi, $sdt, $email, $pttt, $ngaydathang, $total, $trangthai);
+function insert_bill($iduser, $hoten, $diachi, $sdt, $email, $pttt, $ngaydathang, $total, $trangthai, $vnp_transaction_no = NULL, $vnp_bank_code = NULL) {
+    $sql = "INSERT INTO bill(iduser, hoten, diachi, sdt, email, pttt, ngaydathang, total, trangthai, vnp_transaction_no, vnp_bank_code) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    return pdo_execute_return_lastInsertId($sql, $iduser, $hoten, $diachi, $sdt, $email, $pttt, $ngaydathang, $total, $trangthai, $vnp_transaction_no, $vnp_bank_code);
 }
 
 
@@ -17,8 +18,8 @@ function load_bill_by_user($iduser) {
 }
 
 function load_bill_by_id($id) { 
-    $sql = "SELECT * FROM bill WHERE id = $id";
-    return pdo_query_one($sql);
+    $sql = "SELECT * FROM bill WHERE id = ?";
+    return pdo_query_one($sql, $id);
 }
 
 function load_all_orders() {
@@ -33,8 +34,8 @@ function update_bill_status($id, $status) {
 }
 
 function loadOne_bill($id) {
-    $sql = "SELECT * FROM bill WHERE id = $id";
-    $suabill = pdo_query_one($sql);
+    $sql = "SELECT * FROM bill WHERE id = ?";
+    $suabill = pdo_query_one($sql, $id);
     return $suabill;
 }
 
@@ -43,7 +44,10 @@ function update_order_status($order_id, $status) {
     return pdo_execute($sql, $status, $order_id); 
 }
 
-
+function loadall_bill($iduser) {
+    $sql = "SELECT * FROM bill WHERE iduser = " . $iduser . " ORDER BY id DESC";
+    return pdo_query($sql);
+}
 
 
 ?>

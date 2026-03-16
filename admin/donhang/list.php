@@ -1,14 +1,15 @@
 <?php
-function get_payment_method_name($pttt_code) {
+function get_payment_method_name($pttt_code)
+{
     $payment_methods = [
-        1 => 'Chuyển khoản',
-        2 => 'Thanh toán khi nhận hàng',
-        3 => 'Thẻ tín dụng'
+        1 => 'Thanh toán trực tiếp (COD)',
+        2 => 'Thanh toán online(VNpay)',
     ];
     return isset($payment_methods[$pttt_code]) ? $payment_methods[$pttt_code] : 'Không xác định';
 }
 
-function get_order_status_name($status_code) {
+function get_order_status_name($status_code)
+{
     $status_labels = [
         0 => 'Đơn hàng mới',
         1 => 'Đang xử lý',
@@ -17,20 +18,22 @@ function get_order_status_name($status_code) {
         4 => 'Đã giao hàng',
         5 => 'Giao hàng thất bại',
         6 => 'Hủy đơn'
-  
+
     ];
     return isset($status_labels[$status_code]) ? $status_labels[$status_code] : 'Không xác định';
-  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DANH SÁCH ĐƠN HÀNG</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="trangsp/sp.css"> 
+    <link rel="stylesheet" href="trangsp/sp.css">
 </head>
+
 <body>
     <main class="main-wrapper">
         <div class="main-content">
@@ -54,6 +57,8 @@ function get_order_status_name($status_code) {
                                         <th>Total</th>
                                         <th>Ngày Đặt Hàng</th>
                                         <th>Trạng Thái</th>
+                                        <th>Mã giao dịch của VNPay</th>
+                                        <th>Mã ngân hàng thanh toán</th>
                                         <th>Chức Năng</th>
                                     </tr>
                                 </thead>
@@ -62,6 +67,10 @@ function get_order_status_name($status_code) {
                                     foreach ($orders as $order) {
                                         $pttt_name = get_payment_method_name($order['pttt']);
                                         $status_name = get_order_status_name($order['trangthai']);
+
+                                        $vnp_no = !empty($order['vnp_transaction_no']) ? $order['vnp_transaction_no'] : '-';
+                                        $vnp_bank = !empty($order['vnp_bank_code']) ? $order['vnp_bank_code'] : '-';
+
                                         echo "<tr>
                                             <td>{$order['id']}</td>
                                             <td>{$order['iduser']}</td>
@@ -73,6 +82,7 @@ function get_order_status_name($status_code) {
                                             <td>" . number_format($order['total']) . "đ</td>
                                             <td>{$order['ngaydathang']}</td>
                                             <td>{$status_name}</td>
+                                            <td>{$vnp_no}</td> <td>{$vnp_bank}</td>
                                             <td>
                                                 <a href='index.php?act=chitietdh&id={$order['id']}' class='sua'>
                                                     <i class='bi bi-pencil-square'></i>
@@ -90,4 +100,5 @@ function get_order_status_name($status_code) {
         </div>
     </main>
 </body>
+
 </html>

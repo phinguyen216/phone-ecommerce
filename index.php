@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 include "model/pdo.php";
 include "model/danhmuc.php";
 include "model/sanpham.php";
@@ -33,13 +33,16 @@ if (isset($_GET['act']) && $_GET['act'] != "") {
 
         // ===============================
         case 'sanpham':
-            $keyword = $_POST['keyword'] ?? "";
+            $kyw = (isset($_POST['kyw']) && $_POST['kyw'] != "") ? $_POST['kyw'] : "";
+            $iddm = (isset($_GET['iddm']) && $_GET['iddm'] > 0) ? $_GET['iddm'] : 0;
 
-            if (isset($_GET['iddm']) && $_GET['iddm'] > 0) {
-                $iddm = $_GET['iddm'];
-                $dssp = loadall_sanpham($iddm);
+            $dssp = loadall_sanpham($kyw, $iddm);
+
+            if ($iddm > 0) {
+                $dm = load_ten_dm($iddm);
+                $tendm = (is_array($dm)) ? $dm['name'] : "";
             } else {
-                $dssp = loadall_sanpham();
+                $tendm = "Tất cả sản phẩm";
             }
 
             include "trangsp/sanpham.php";
@@ -203,84 +206,96 @@ if (isset($_GET['act']) && $_GET['act'] != "") {
 
         // ===============================
         case 'bill':
-    if (isset($_POST['xacnhan'])) {
+            if (isset($_POST['xacnhan'])) {
 
-        $iduser = $_SESSION['user']['id'] ?? 0;
+                $iduser = $_SESSION['user']['id'] ?? 0;
 
-        $hoten = $_POST['hoten'] ?? '';
-        $diachi = $_POST['diachi'] ?? '';
-        $sdt = $_POST['sdt'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $pttt = $_POST['pttt'] ?? 1;
-        $ngaydathang = $_POST['ngaydathang'] ?? date('Y-m-d');
+                $hoten = $_POST['hoten'] ?? '';
+                $diachi = $_POST['diachi'] ?? '';
+                $sdt = $_POST['sdt'] ?? '';
+                $email = $_POST['email'] ?? '';
+                $pttt = $_POST['pttt'] ?? 1;
+                $ngaydathang = date('Y-m-d H:i:s');
+                $total = floatval($_POST['total'] ?? 0);
 
-        $total = floatval($_POST['total'] ?? 0);
+                $trangthai = 0;
 
-        $trangthai = 0;
+                // Nếu thanh toán online
+                if ($pttt == 2) {
 
-        // Nếu thanh toán online
-        if ($pttt == 2) {
+                    $_SESSION['vnpay_bill'] = [
+                        'iduser' => $iduser,
+                        'hoten' => $hoten,
+                        'diachi' => $diachi,
+                        'sdt' => $sdt,
+                        'email' => $email,
+                        'pttt' => $pttt,
+                        'ngaydathang' => $ngaydathang,
+                        'total' => $total
+                    ];
 
-            $_SESSION['vnpay_bill'] = [
-                'iduser' => $iduser,
-                'hoten' => $hoten,
-                'diachi' => $diachi,
-                'sdt' => $sdt,
-                'email' => $email,
-                'pttt' => $pttt,
-                'ngaydathang' => $ngaydathang,
-                'total' => $total
-            ];
+                    include "vnpay/vnpay_create_payment.php";
+                    exit();
+                }
 
-            include "vnpay/vnpay_create_payment.php";
-            exit();
-        }
+                // Thanh toán thường
+                $idbill = insert_bill($iduser, $hoten, $diachi, $sdt, $email, $pttt, $ngaydathang, $total, $trangthai, NULL, Null);
 
-        // Thanh toán thường
-        $idbill = insert_bill($iduser, $hoten, $diachi, $sdt, $email, $pttt, $ngaydathang, $total, $trangthai);
+                if ($idbill) {
 
-        if ($idbill) {
+                    $cartItems = load_cart_by_user($iduser);
 
-            $cartItems = load_cart_by_user($iduser);
+                    foreach ($cartItems as $item) {
 
-            foreach ($cartItems as $item) {
+                        $sp = pdo_query_one(
+                            "SELECT id FROM sanpham WHERE name = ?",
+                            $item['name']
+                        );
 
-                $sp = pdo_query_one(
-                    "SELECT id FROM sanpham WHERE name = ?",
-                    $item['name']
-                );
+                        $idpro = $sp ? $sp['id'] : 0;
 
-                $idpro = $sp ? $sp['id'] : 0;
+                        insert_bill_detail(
+                            $iduser,
+                            $idbill,
+                            $idpro,
+                            $item['img'],
+                            $item['name'],
+                            $item['soluong'],
+                            $item['price'],
+                            $item['thanhtien']
+                        );
+                    }
 
-                insert_bill_detail(
-                    $iduser,
-                    $idbill,
-                    $idpro,
-                    $item['img'],
-                    $item['name'],
-                    $item['soluong'],
-                    $item['price'],
-                    $item['thanhtien']
-                );
+                    clear_cart($iduser);
+
+                    header('Location: index.php?act=billconfirm&idbill=' . $idbill);
+                    exit();
+                }
             }
 
-            clear_cart($iduser);
-
-            header('Location: index.php?act=billconfirm');
-            exit();
-        }
-    }
-
-    include "trangsp/bill.php";
-    break;
+            include "trangsp/bill.php";
+            break;
         case 'mybill':
-            include "trangsp/mybill.php";
+            if (isset($_SESSION['user'])) {
+                $iduser = $_SESSION['user']['id'];
+                $listbill = loadall_bill($iduser);
+                include "trangsp/mybill.php";
+            } else {
+                header('Location: index.php?act=dangnhap');
+                exit();
+            }
             break;
 
 
         // ===============================
         case 'billconfirm':
-            include "trangsp/billconfirm.php";
+            if (isset($_GET['idbill']) && $_GET['idbill'] > 0) {
+                $idbill = $_GET['idbill'];
+                $bill = load_bill_by_id($idbill);
+                include "trangsp/billconfirm.php";
+            } else {
+                header('Location: index.php');
+            }
             break;
 
         // ===============================
@@ -308,7 +323,6 @@ if (isset($_GET['act']) && $_GET['act'] != "") {
     include "view/home.php";
 }
 
-// ⭐ Include header/footer cuối cùng để không gây lỗi header()
 $page_content = ob_get_clean();
 include "view/header.php";
 echo $page_content;

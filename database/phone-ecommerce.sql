@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 15, 2026 at 11:39 AM
+-- Generation Time: Mar 16, 2026 at 12:10 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.2.20
 
@@ -34,21 +34,13 @@ CREATE TABLE `bill` (
   `diachi` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `sdt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `pttt` tinyint NOT NULL COMMENT '1. Thanh toán trực tiếp 2. Chuyển khoản 3. Thanh toán online',
-  `ngaydathang` date NOT NULL,
+  `pttt` tinyint NOT NULL COMMENT '1. Thanh toán trực tiếp (COD) 2. Thanh toán online (VNPay)',
+  `ngaydathang` datetime NOT NULL,
   `total` decimal(20,2) NOT NULL,
-  `trangthai` tinyint NOT NULL COMMENT '0. Chờ xác nhận \r\n1. Đang xử lý\r\n2. Xác nhận đơn hàng \r\n3. Đang giao hàng \r\n4. Đã giao hàng\r\n5. Giao hàng thất bại\r\n6. Hủy Đơn\r\n\r\n'
+  `trangthai` tinyint NOT NULL COMMENT '0. Chờ xác nhận \r\n1. Đang xử lý\r\n2. Xác nhận đơn hàng \r\n3. Đang giao hàng \r\n4. Đã giao hàng\r\n5. Giao hàng thất bại\r\n6. Hủy Đơn\r\n\r\n',
+  `vnp_transaction_no` varchar(100) DEFAULT NULL COMMENT 'Mã giao dịch của VNPay',
+  `vnp_bank_code` varchar(50) DEFAULT NULL COMMENT 'Mã ngân hàng thanh toán'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `bill`
---
-
-INSERT INTO `bill` (`id`, `iduser`, `hoten`, `diachi`, `sdt`, `email`, `pttt`, `ngaydathang`, `total`, `trangthai`) VALUES
-(166, 24, 'Nguyễn Văn Phi', 'Nam Từ Liêm , Hà Nội , Việt Nam', '0123456789', 'quangblubluto@gmail.com', 3, '2026-03-12', '15553737.00', 0),
-(167, 24, 'Nguyễn Văn Phi', 'Nam Từ Liêm , Hà Nội , Việt Nam', '0123456789', 'quangblubluto@gmail.com', 2, '2026-03-12', '9990000.00', 0),
-(168, 24, 'Nguyễn Văn Phi', 'Nam Từ Liêm , Hà Nội , Việt Nam', '0123456789', 'quangblubluto@gmail.com', 2, '2026-03-12', '35533737.00', 1),
-(169, 24, 'Nguyễn Văn Phi', 'Nam Từ Liêm , Hà Nội , Việt Nam', '0123456789', 'quangblubluto@gmail.com', 2, '2026-03-12', '15553737.00', 1);
 
 -- --------------------------------------------------------
 
@@ -68,17 +60,6 @@ CREATE TABLE `bill_detail` (
   `thanhtien` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `bill_detail`
---
-
-INSERT INTO `bill_detail` (`id`, `iduser`, `idbill`, `idpro`, `img`, `name`, `soluong`, `price`, `thanhtien`) VALUES
-(108, 24, 166, 1, 'ip1.jpg', 'iPhone 17 128GB', 1, '15553737.00', 15553737),
-(109, 24, 167, 2, 'ip3.jpg', 'iPhone SE (2022)', 1, '9990000.00', 9990000),
-(110, 24, 168, 2, 'ip3.jpg', 'iPhone SE (2022)', 2, '9990000.00', 19980000),
-(111, 24, 168, 1, 'ip1.jpg', 'iPhone 17 128GB', 1, '15553737.00', 15553737),
-(112, 24, 169, 1, 'ip1.jpg', 'iPhone 17 128GB', 1, '15553737.00', 15553737);
-
 -- --------------------------------------------------------
 
 --
@@ -96,13 +77,6 @@ CREATE TABLE `cart` (
   `thanhtien` int NOT NULL,
   `idbill` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `cart`
---
-
-INSERT INTO `cart` (`id`, `iduser`, `idpro`, `img`, `name`, `price`, `soluong`, `thanhtien`, `idbill`) VALUES
-(113, 43, 1, 'ip1.jpg', 'iPhone 17 128GB', '15553737.00', 1, 15553737, 0);
 
 -- --------------------------------------------------------
 
@@ -239,19 +213,19 @@ ALTER TABLE `taikhoan`
 -- AUTO_INCREMENT for table `bill`
 --
 ALTER TABLE `bill`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=170;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
 
 --
 -- AUTO_INCREMENT for table `bill_detail`
 --
 ALTER TABLE `bill_detail`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
 --
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- AUTO_INCREMENT for table `danhmuc`

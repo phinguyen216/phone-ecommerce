@@ -7,7 +7,7 @@
 
     <!-- Logo -->
     <a class="navbar-brand fw-bold" href="index.php">
-      <i class="bi bi-speedometer2"></i> QDD Phone
+      <i class="bi bi-speedometer2"></i> Phone Ecommerce
     </a>
 
     <!-- Toggle mobile -->

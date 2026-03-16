@@ -20,4 +20,9 @@
     $sql = "UPDATE danhmuc SET name = '$name' WHERE id =" .$id;
     pdo_execute($sql);
   } 
+  function load_ten_dm($id) {
+    $sql = "SELECT name FROM danhmuc WHERE id = " . $id;
+    $dm = pdo_query_one($sql);
+    return $dm;
+}
 ?>

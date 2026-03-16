@@ -27,7 +27,7 @@
         <div class="col-12 col-sm-6 col-lg-4">
             <div class="card card-product">
                 <a href="<?= $linksp ?>">
-                    <img src="view/images/<?= $sp['img'] ?>" class="card-img-top" alt="<?= $sp['name'] ?>">
+                    <img src="upload/<?= $sp['img'] ?>" class="card-img-top" alt="<?= $sp['name'] ?>">
                 </a>
                 <div class="card-body">
                     <h6 class="card-title"><?= $sp['name'] ?></h6>
